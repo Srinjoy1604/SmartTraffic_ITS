@@ -14,7 +14,9 @@ app.use(express.json());
 
 
 app.use('/api', gpsRoutes);
-
+app.get("/health", (req, res) => {
+    res.send("Server ON");
+});
 
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Error:", err));
