@@ -5,7 +5,7 @@ exports.uploadGpsData = async (req, res) => {
     const { vehicleID, latitude, longitude, speed, course, time } = req.body;
 
     if (!vehicleID || !latitude || !longitude || !time) {
-      return res.status(400).json({ error: "Missing required fields." });
+      return res.status(400).json({ error: "❌ Missing required fields." });
     }
 
     const newEntry = new GpsData({ vehicleID, latitude, longitude, speed, course, time });
@@ -14,6 +14,7 @@ exports.uploadGpsData = async (req, res) => {
     res.status(200).json({ message: "✅ GPS data uploaded successfully." });
   } catch (error) {
     console.error("Upload Error:", error);
-    res.status(500).json({ error: "Server Error" });
+    res.status(500).json({ error: error.message || "Unknown server error" });
   }
 };
+
