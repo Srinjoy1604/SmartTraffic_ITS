@@ -26,7 +26,7 @@ const Home = () => {
   useEffect(() => {
     const scanDevices = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/scan`);
+        const res = await fetch(`${BASE_URL}/connect/scan`);
         if (res.ok) {
           const data = await res.json();
           setDevices(data.map(d => d.deviceId));
@@ -48,7 +48,7 @@ const Home = () => {
     }
 
     try {
-      const res = await fetch(`${BASE_URL}/api/config`, {
+      const res = await fetch(`${BASE_URL}/connect/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deviceId: selectedDevice, ssid, password, securityId }),
@@ -78,7 +78,7 @@ const Home = () => {
       addFeedback('WebSocket connection failed. Polling instead...');
       const poll = setInterval(async () => {
         try {
-          const res = await fetch(`${BASE_URL}/api/feedback?deviceId=${selectedDevice}`);
+          const res = await fetch(`${BASE_URL}/connect/feedback?deviceId=${selectedDevice}`);
           if (res.ok) {
             const data = await res.json();
             data.forEach(msg => addFeedback(msg.message));

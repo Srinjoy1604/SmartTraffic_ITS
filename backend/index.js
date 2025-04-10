@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use('/api', gpsRoutes);
 
-app.use('/', wifiRoutes);
+app.use('/connect', wifiRoutes);
 app.get("/health", (req, res) => {
     res.send("Server ON");
 });
