@@ -1,27 +1,7 @@
-const wifi = require('node-wifi');
-
-wifi.init({ iface: null }); // Use default interface
-
-// In-memory storage for device configs
 const devices = {};
 
 exports.serveReact = (req, res) => {
   res.sendFile(__dirname + '/../public/index.html');
-};
-
-exports.scanDevices = (req, res) => {
-  wifi.scan((err, networks) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Failed to scan networks" });
-    }
-
-    const esp32Devices = networks
-      .filter(net => net.ssid.startsWith('ESP32_'))
-      .map(net => ({ ssid: net.ssid, deviceId: net.ssid.replace('ESP32_', '') }));
-
-    res.json(esp32Devices);
-  });
 };
 
 exports.submitConfig = (req, res) => {
@@ -31,19 +11,26 @@ exports.submitConfig = (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  devices[deviceId] = { ssid, password, securityId };
+  devices[deviceId] = { ssid, password, securityId, lastFeedback: null };
   res.json({ status: "success" });
 };
 
-exports.handleFeedback = (wss) => (req, res) => {
+exports.handleFeedback = (req, res) => {
   const { deviceId, message } = req.body;
   console.log(`Feedback from ${deviceId}: ${message}`);
 
-  wss.clients.forEach(client => {
-    if (client.readyState === 1) {
-      client.send(JSON.stringify({ deviceId, message }));
-    }
-  });
+  if (devices[deviceId]) {
+    devices[deviceId].lastFeedback = message;
+  }
 
   res.json({ status: "received" });
+};
+
+exports.getFeedback = (req, res) => {
+  const { deviceId } = req.query;
+  if (!deviceId || !devices[deviceId]) {
+    return res.json([]);
+  }
+  const lastFeedback = devices[deviceId].lastFeedback || "Waiting for device response...";
+  res.json([{ message: lastFeedback }]);
 };
