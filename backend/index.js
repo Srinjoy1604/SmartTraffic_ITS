@@ -16,7 +16,7 @@ app.listen(PORT, () => {
 });
 
 app.use(cors({
-  origin: [`${DevURL}`, "http://localhost:5173"],
+  origin: [`${DevURL}`, "http://localhost:5173","https://iot-project-interfacefrontend.vercel.app"],
   credentials: true,
   optionSuccessStatus: 200
 }));

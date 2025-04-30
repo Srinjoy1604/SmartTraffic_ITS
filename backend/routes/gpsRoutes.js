@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { uploadGpsData } = require('../controllers/gpsController');
+const { uploadGpsData,fetchData} = require('../controllers/gpsController');
 
 router.post('/gps', uploadGpsData);
+router.get('/fetchdata',fetchData);
 
 module.exports = router;

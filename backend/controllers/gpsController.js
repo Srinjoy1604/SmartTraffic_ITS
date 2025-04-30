@@ -1,6 +1,6 @@
 const GpsData = require('../models/GpsData');
 
-exports.uploadGpsData = async (req, res) => {
+const uploadGpsData = async (req, res) => {
   try {
     const { vehicleID, latitude, longitude, speed, course, accelVelocity, accelCourse, time } = req.body;
 
@@ -25,4 +25,16 @@ exports.uploadGpsData = async (req, res) => {
     console.error("Upload Error:", error);
     res.status(500).json({ error: error.message || "Unknown server error" });
   }
+};
+const fetchData= async (req, res) => {
+  try {
+    const data = await GpsData.find().sort({ timestamp: -1 });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message});
+  }
+}
+module.exports={
+  uploadGpsData,
+  fetchData
 };
